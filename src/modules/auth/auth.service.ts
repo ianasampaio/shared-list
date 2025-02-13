@@ -4,17 +4,17 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
 import { compare, hash } from 'bcrypt';
 import { UserRepository } from 'src/infra/database/prisma/repositories/user/user.repository';
-import { UUIDGenerator } from 'src/shared/uuid-generator';
-import { SigninDto } from './dto/signin.dto';
-import { SignupDto } from './dto/signup.dto';
-import { JwtService } from '@nestjs/jwt';
-import { ForgotPasswordDto } from './dto/forgot-password.dto';
 import { Templates, TokenAction } from 'src/infra/mail/mail.dto';
-import { env } from 'src/shared/env';
 import { MailService } from 'src/infra/mail/mail.service';
 import { UserType } from 'src/shared/decorators/active-user.decorator';
+import { env } from 'src/shared/env';
+import { UUIDGenerator } from 'src/shared/uuid-generator';
+import { ForgotPasswordDto } from './dto/forgot-password.dto';
+import { SigninDto } from './dto/signin.dto';
+import { SignupDto } from './dto/signup.dto';
 import { UpdatePasswordDto } from './dto/update-password.dto';
 
 @Injectable()
