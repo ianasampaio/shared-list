@@ -15,6 +15,7 @@ model User {
   createdAt     DateTime       @default(now()) @map("created_at")
   updatedAt     DateTime       @updatedAt @map("updated_at")
   shoppingLists ShoppingList[]
+  collaborators Collaborator[]
 
   @@map("users")
 }
@@ -25,7 +26,21 @@ model ShoppingList {
   userId    String   @map("user_id") @db.Uuid
   createdAt DateTime @default(now()) @map("created_at")
 
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user          User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  collaborators Collaborator[]
 
   @@map("shopping_lists")
+}
+
+model Collaborator {
+  id             String   @id @default(uuid()) @db.Uuid
+  name           String
+  userId         String   @map("user_id") @db.Uuid
+  shoppingListId String   @map("list_id") @db.Uuid
+  createdAt      DateTime @default(now()) @map("created_at")
+
+  user         User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  shoppingList ShoppingList @relation(fields: [shoppingListId], references: [id], onDelete: Cascade)
+
+  @@map("collaborators")
 }
