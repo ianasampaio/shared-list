@@ -16,6 +16,7 @@ model User {
   updatedAt     DateTime       @updatedAt @map("updated_at")
   shoppingLists ShoppingList[]
   collaborators Collaborator[]
+  shoppingItems ShoppingItem[]
 
   @@map("users")
 }
@@ -28,6 +29,7 @@ model ShoppingList {
 
   user          User           @relation(fields: [userId], references: [id], onDelete: Cascade)
   collaborators Collaborator[]
+  shoppingItems ShoppingItem[]
 
   @@map("shopping_lists")
 }
@@ -36,11 +38,32 @@ model Collaborator {
   id             String   @id @default(uuid()) @db.Uuid
   name           String
   userId         String   @map("user_id") @db.Uuid
-  shoppingListId String   @map("list_id") @db.Uuid
+  shoppingListId String   @map("shopping_list_id") @db.Uuid
   createdAt      DateTime @default(now()) @map("created_at")
 
   user         User         @relation(fields: [userId], references: [id], onDelete: Cascade)
   shoppingList ShoppingList @relation(fields: [shoppingListId], references: [id], onDelete: Cascade)
 
   @@map("collaborators")
+}
+
+enum ShoppingItemStatus {
+  PENDING
+  PURCHASED
+
+  @@map("shopping_items_status")
+}
+
+model ShoppingItem {
+  id             String             @id @default(uuid()) @db.Uuid
+  description    String
+  status         ShoppingItemStatus @default(PENDING)
+  shoppingListId String             @map("shopping_list_id") @db.Uuid
+  modifiedBy     String             @map("modified_by") @db.Uuid
+  updatedAt      DateTime           @updatedAt @map("updated_at")
+
+  user         User         @relation(fields: [modifiedBy], references: [id], onDelete: Cascade)
+  shoppingList ShoppingList @relation(fields: [shoppingListId], references: [id], onDelete: Cascade)
+
+  @@map("shopping_items")
 }
