@@ -1,21 +1,21 @@
-import { ShoppingItem } from 'src/modules/shopping-item/entities/shopping-item.entity';
+import { ShoppingListItem } from 'src/modules/shopping-list/entities/shopping-list.entity';
 
-export class ShoppingItemEntityToModelMapper {
+export class ItemEntityToModelMapper {
   public static map({
     id,
     description,
     status,
-    shoppingListId,
     modifiedBy,
     updatedAt,
-  }: ShoppingItem) {
+    shoppingListId,
+  }: ShoppingListItem) {
     const data = {
       id,
       description,
       status,
-      shoppingListId,
       modifiedBy,
       updatedAt,
+      shoppingListId,
     };
 
     return data;

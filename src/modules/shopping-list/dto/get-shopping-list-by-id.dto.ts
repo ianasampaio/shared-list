@@ -5,7 +5,7 @@ export class GetShoppinListByIdResponseDto {
   id: string;
 
   @ApiProperty()
-  userId: string;
+  ownerId: string;
 
   @ApiProperty()
   name: string;

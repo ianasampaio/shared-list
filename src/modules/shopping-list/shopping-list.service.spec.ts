@@ -3,8 +3,14 @@ import { ShoppingListService } from './shopping-list.service';
 import { ShoppingListRepository } from 'src/infra/database/prisma/repositories/shopping-list/shopping-list.repository';
 import { CreateShoppingListDto } from './dto/create-shopping-list.dto';
 import { UserType } from 'src/shared/decorators/active-user.decorator';
-import { ShoppingList } from './entities/shopping-list.entity';
+import {
+  ItemStatus,
+  ShoppingList,
+  ShoppingListItem,
+} from './entities/shopping-list.entity';
 import { NotFoundException } from '@nestjs/common';
+import { UpdateShoppingListDto } from './dto/update-shopping-list.dto';
+import { UpdateItemDto } from './dto/update-item.dto';
 
 describe('ShoppingListService', () => {
   let service: ShoppingListService;
@@ -18,9 +24,14 @@ describe('ShoppingListService', () => {
           provide: ShoppingListRepository,
           useValue: {
             create: jest.fn().mockResolvedValue(null),
-            list: jest.fn().mockResolvedValue(null),
-            findById: jest.fn().mockResolvedValue(null),
-            delete: jest.fn().mockResolvedValue(null),
+            listShoppingList: jest.fn().mockResolvedValue(null),
+            findShoppingListById: jest.fn().mockResolvedValue(null),
+            updateShoppingList: jest.fn().mockResolvedValue(null),
+            deleteShoppingList: jest.fn().mockResolvedValue(null),
+            addItem: jest.fn().mockResolvedValue(null),
+            updateItem: jest.fn().mockResolvedValue(null),
+            findItemById: jest.fn().mockResolvedValue(null),
+            deleteItem: jest.fn().mockResolvedValue(null),
           },
         },
       ],
@@ -34,6 +45,7 @@ describe('ShoppingListService', () => {
 
   it('should be defined', () => {
     expect(service).toBeDefined();
+    expect(shoppingListRepository).toBeDefined();
   });
 
   describe('create', () => {
@@ -52,82 +64,331 @@ describe('ShoppingListService', () => {
     });
   });
 
-  describe('list', () => {
+  describe('list shopping list', () => {
     it('should list shopping lists', async () => {
       const shoppingList: ShoppingList = {
         id: 'b6281bf4-bb46-490f-b59d-6db9e89f8ca4',
         name: 'lista de compras',
-        userId: '8cb4c3b7-0933-4c70-b307-0ced2dc3f4f9',
+        ownerId: '8cb4c3b7-0933-4c70-b307-0ced2dc3f4f9',
         createdAt: new Date(),
+        updatedAt: new Date(),
       };
 
       jest
-        .spyOn(shoppingListRepository, 'list')
+        .spyOn(shoppingListRepository, 'listShoppingList')
         .mockResolvedValueOnce([shoppingList]);
 
-      const response = await service.list();
+      const user: UserType = {
+        id: '8cb4c3b7-0933-4c70-b307-0ced2dc3f4f9',
+      };
+
+      const response = await service.listShoppingList(user);
 
       expect(response).toBeDefined();
       expect(response).toEqual([shoppingList]);
     });
   });
 
-  describe('get by id', () => {
+  describe('get shopping list by id', () => {
     it('should get a shopping list by id', async () => {
       const shoppingList: ShoppingList = {
         id: 'b6281bf4-bb46-490f-b59d-6db9e89f8ca4',
         name: 'lista de compras',
-        userId: '8cb4c3b7-0933-4c70-b307-0ced2dc3f4f9',
+        ownerId: '8cb4c3b7-0933-4c70-b307-0ced2dc3f4f9',
         createdAt: new Date(),
+        updatedAt: new Date(),
       };
 
       jest
-        .spyOn(shoppingListRepository, 'findById')
+        .spyOn(shoppingListRepository, 'findShoppingListById')
         .mockResolvedValueOnce(shoppingList);
 
-      const response = await service.getById(shoppingList.id);
+      const user: UserType = {
+        id: '8cb4c3b7-0933-4c70-b307-0ced2dc3f4f9',
+      };
+
+      const response = await service.getShoppingListById(user, shoppingList.id);
 
       expect(response).toBeDefined();
       expect(response).toEqual(shoppingList);
-      expect(shoppingListRepository.findById).toHaveBeenCalledTimes(1);
+      expect(shoppingListRepository.findShoppingListById).toHaveBeenCalledTimes(
+        1,
+      );
     });
 
     it('should throw a not found exception when shopping list is not found', async () => {
       const id = 'id';
 
       const notFoundException = new NotFoundException(
-        `shopping list ${id} not found`,
+        `Shopping list not found`,
       );
 
-      expect(service.getById(id)).rejects.toEqual(notFoundException);
+      const user: UserType = {
+        id: '8cb4c3b7-0933-4c70-b307-0ced2dc3f4f9',
+      };
+
+      expect(service.getShoppingListById(user, id)).rejects.toEqual(
+        notFoundException,
+      );
     });
   });
 
-  describe('delete', () => {
+  describe('update shopping list', () => {
+    it('should update a shopping list', async () => {
+      const shoppingList: ShoppingList = {
+        id: 'b6281bf4-bb46-490f-b59d-6db9e89f8ca4',
+        name: 'lista de compras',
+        ownerId: '8cb4c3b7-0933-4c70-b307-0ced2dc3f4f9',
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      };
+
+      jest
+        .spyOn(shoppingListRepository, 'findShoppingListById')
+        .mockResolvedValueOnce(shoppingList);
+
+      const updateInput: UpdateShoppingListDto = {
+        name: 'lista de compras',
+      };
+
+      const user: UserType = {
+        id: '8cb4c3b7-0933-4c70-b307-0ced2dc3f4f9',
+      };
+
+      await service.updateShoppingList(user, shoppingList.id, updateInput);
+
+      expect(shoppingListRepository.findShoppingListById).toHaveBeenCalledTimes(
+        1,
+      );
+      expect(shoppingListRepository.updateShoppingList).toHaveBeenCalledTimes(
+        1,
+      );
+    });
+
+    it('should throw a not found exception when shopping list is not found', async () => {
+      const id = 'id';
+
+      const notFoundException = new NotFoundException(
+        `Shopping list not found`,
+      );
+
+      const user: UserType = {
+        id: '8cb4c3b7-0933-4c70-b307-0ced2dc3f4f9',
+      };
+
+      expect(service.getShoppingListById(user, id)).rejects.toEqual(
+        notFoundException,
+      );
+    });
+  });
+
+  describe('delete shopping list', () => {
     it('should delete a shopping list', async () => {
       const shoppingList: ShoppingList = {
         id: 'b6281bf4-bb46-490f-b59d-6db9e89f8ca4',
         name: 'lista de compras',
-        userId: '8cb4c3b7-0933-4c70-b307-0ced2dc3f4f9',
+        ownerId: '8cb4c3b7-0933-4c70-b307-0ced2dc3f4f9',
         createdAt: new Date(),
+        updatedAt: new Date(),
       };
 
       jest
-        .spyOn(shoppingListRepository, 'findById')
+        .spyOn(shoppingListRepository, 'findShoppingListById')
         .mockResolvedValueOnce(shoppingList);
 
-      await service.delete('id');
-      expect(shoppingListRepository.delete).toHaveBeenCalledTimes(1);
+      const user: UserType = {
+        id: '8cb4c3b7-0933-4c70-b307-0ced2dc3f4f9',
+      };
+
+      await service.deleteShoppingList(user, shoppingList.id);
+
+      expect(shoppingListRepository.deleteShoppingList).toHaveBeenCalledTimes(
+        1,
+      );
     });
 
     it('should throw a not found exception when shopping list is not found', async () => {
       const id = 'id';
 
       const notFoundException = new NotFoundException(
-        `shopping list ${id} not found`,
+        `Shopping list not found`,
       );
 
-      expect(service.getById(id)).rejects.toEqual(notFoundException);
+      const user: UserType = {
+        id: '8cb4c3b7-0933-4c70-b307-0ced2dc3f4f9',
+      };
+
+      expect(service.getShoppingListById(user, id)).rejects.toEqual(
+        notFoundException,
+      );
+    });
+  });
+
+  describe('add an item', () => {
+    it('should add an item to a shopping list', async () => {
+      const shoppingList: ShoppingList = {
+        id: 'b6281bf4-bb46-490f-b59d-6db9e89f8ca4',
+        name: 'lista de compras',
+        ownerId: '8cb4c3b7-0933-4c70-b307-0ced2dc3f4f9',
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      };
+
+      jest
+        .spyOn(shoppingListRepository, 'findShoppingListById')
+        .mockResolvedValueOnce(shoppingList);
+
+      const user: UserType = {
+        id: '8cb4c3b7-0933-4c70-b307-0ced2dc3f4f9',
+      };
+
+      const itemInput: ShoppingListItem = {
+        id: '3df6e69d-60ea-493e-bf44-f3d520e22932',
+        description: 'item',
+        status: ItemStatus.PENDING,
+        modifiedBy: user.id,
+        updatedAt: new Date(),
+        shoppingListId: shoppingList.id,
+      };
+
+      await service.addItem(user, shoppingList.id, itemInput);
+
+      expect(shoppingListRepository.addItem).toHaveBeenCalledTimes(1);
+    });
+
+    it('should throw a not found exception when shopping list is not found', async () => {
+      const id = 'id';
+
+      const notFoundException = new NotFoundException(
+        `Shopping list not found`,
+      );
+
+      const user: UserType = {
+        id: '8cb4c3b7-0933-4c70-b307-0ced2dc3f4f9',
+      };
+
+      expect(service.getShoppingListById(user, id)).rejects.toEqual(
+        notFoundException,
+      );
+    });
+  });
+
+  describe('update an item', () => {
+    it('should update an item', async () => {
+      const shoppingList: ShoppingList = {
+        id: 'b6281bf4-bb46-490f-b59d-6db9e89f8ca4',
+        name: 'lista de compras',
+        ownerId: '8cb4c3b7-0933-4c70-b307-0ced2dc3f4f9',
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      };
+
+      jest
+        .spyOn(shoppingListRepository, 'findShoppingListById')
+        .mockResolvedValueOnce(shoppingList);
+
+      const item: ShoppingListItem = {
+        id: '3df6e69d-60ea-493e-bf44-f3d520e22932',
+        description: 'item',
+        status: ItemStatus.PENDING,
+        modifiedBy: '8cb4c3b7-0933-4c70-b307-0ced2dc3f4f9',
+        updatedAt: new Date(),
+        shoppingListId: 'b6281bf4-bb46-490f-b59d-6db9e89f8ca4',
+      };
+
+      jest
+        .spyOn(shoppingListRepository, 'findItemById')
+        .mockResolvedValueOnce(item);
+
+      const user: UserType = {
+        id: '8cb4c3b7-0933-4c70-b307-0ced2dc3f4f9',
+      };
+
+      const updateItemInput: UpdateItemDto = {
+        description: 'item',
+        status: ItemStatus.PENDING,
+      };
+
+      await service.updateItem(user, shoppingList.id, item.id, updateItemInput);
+
+      expect(shoppingListRepository.updateItem).toHaveBeenCalledTimes(1);
+      expect(shoppingListRepository.findShoppingListById).toHaveBeenCalledTimes(
+        1,
+      );
+      expect(shoppingListRepository.findItemById).toHaveBeenCalledTimes(1);
+    });
+
+    it('should throw a not found exception when shopping list is not found', async () => {
+      const id = 'id';
+
+      const notFoundException = new NotFoundException(
+        `Shopping list not found`,
+      );
+
+      const user: UserType = {
+        id: '8cb4c3b7-0933-4c70-b307-0ced2dc3f4f9',
+      };
+
+      expect(service.getShoppingListById(user, id)).rejects.toEqual(
+        notFoundException,
+      );
+    });
+  });
+
+  describe('delete an item', () => {
+    it('should delete an item', async () => {
+      const shoppingList: ShoppingList = {
+        id: 'b6281bf4-bb46-490f-b59d-6db9e89f8ca4',
+        name: 'lista de compras',
+        ownerId: '8cb4c3b7-0933-4c70-b307-0ced2dc3f4f9',
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      };
+
+      jest
+        .spyOn(shoppingListRepository, 'findShoppingListById')
+        .mockResolvedValueOnce(shoppingList);
+
+      const item: ShoppingListItem = {
+        id: '3df6e69d-60ea-493e-bf44-f3d520e22932',
+        description: 'item',
+        status: ItemStatus.PENDING,
+        modifiedBy: '8cb4c3b7-0933-4c70-b307-0ced2dc3f4f9',
+        updatedAt: new Date(),
+        shoppingListId: 'b6281bf4-bb46-490f-b59d-6db9e89f8ca4',
+      };
+
+      jest
+        .spyOn(shoppingListRepository, 'findItemById')
+        .mockResolvedValueOnce(item);
+
+      const user: UserType = {
+        id: '8cb4c3b7-0933-4c70-b307-0ced2dc3f4f9',
+      };
+
+      await service.deleteItem(user, shoppingList.id, item.id);
+
+      expect(shoppingListRepository.deleteItem).toHaveBeenCalledTimes(1);
+      expect(shoppingListRepository.findShoppingListById).toHaveBeenCalledTimes(
+        1,
+      );
+      expect(shoppingListRepository.findItemById).toHaveBeenCalledTimes(1);
+    });
+
+    it('should throw a not found exception when shopping list is not found', async () => {
+      const id = 'id';
+
+      const notFoundException = new NotFoundException(
+        `Shopping list not found`,
+      );
+
+      const user: UserType = {
+        id: '8cb4c3b7-0933-4c70-b307-0ced2dc3f4f9',
+      };
+
+      expect(service.getShoppingListById(user, id)).rejects.toEqual(
+        notFoundException,
+      );
     });
   });
 });
