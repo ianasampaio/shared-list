@@ -185,4 +185,23 @@ export class ShoppingListService {
 
     await this.shoppingListRepository.deleteItem(shoppingListId, itemId);
   }
+
+  public async listCollaboratorsFromShoppingList(
+    userType: UserType,
+    shoppingListId: string,
+  ) {
+    const shoppingList = await this.shoppingListRepository.findShoppingListById(
+      userType,
+      shoppingListId,
+    );
+
+    if (!shoppingList) {
+      throw new NotFoundException(`Shopping list not found`);
+    }
+
+    return this.shoppingListRepository.listCollaboratorsFromShoppingList(
+      userType,
+      shoppingListId,
+    );
+  }
 }
