@@ -32,6 +32,9 @@ describe('ShoppingListService', () => {
             updateItem: jest.fn().mockResolvedValue(null),
             findItemById: jest.fn().mockResolvedValue(null),
             deleteItem: jest.fn().mockResolvedValue(null),
+            listCollaboratorsFromShoppingList: jest
+              .fn()
+              .mockResolvedValue(['Colaborador 1', 'Colaborador 2']),
           },
         },
       ],
@@ -388,6 +391,38 @@ describe('ShoppingListService', () => {
 
       expect(service.getShoppingListById(user, id)).rejects.toEqual(
         notFoundException,
+      );
+    });
+  });
+
+  describe('list collaborators from a shopping list', () => {
+    it('should list collaborators from a shopping list', async () => {
+      const shoppingList: ShoppingList = {
+        id: 'b6281bf4-bb46-490f-b59d-6db9e89f8ca4',
+        name: 'lista de compras',
+        ownerId: '8cb4c3b7-0933-4c70-b307-0ced2dc3f4f9',
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        collaborators: [{ name: 'Colaborador 1' }, { name: 'Colaborador 2' }],
+      };
+
+      jest
+        .spyOn(shoppingListRepository, 'findShoppingListById')
+        .mockResolvedValueOnce(shoppingList);
+
+      const user: UserType = {
+        id: '8cb4c3b7-0933-4c70-b307-0ced2dc3f4f9',
+      };
+
+      const response = await service.listCollaboratorsFromShoppingList(
+        user,
+        shoppingList.id,
+      );
+
+      expect(response).toBeDefined();
+      expect(response).toEqual(['Colaborador 1', 'Colaborador 2']);
+      expect(shoppingListRepository.findShoppingListById).toHaveBeenCalledTimes(
+        1,
       );
     });
   });

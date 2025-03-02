@@ -181,4 +181,34 @@ export class ShoppingListRepository {
       },
     });
   }
+
+  public async listCollaboratorsFromShoppingList(
+    userType: UserType,
+    id: string,
+  ): Promise<string[]> {
+    const shoppingListModel = await this.prismaService.shoppingList.findUnique({
+      where: {
+        id,
+        OR: [
+          { ownerId: userType.id },
+          {
+            collaborators: {
+              some: {
+                userId: userType.id,
+              },
+            },
+          },
+        ],
+      },
+      select: {
+        collaborators: {
+          select: {
+            name: true,
+          },
+        },
+      },
+    });
+
+    return shoppingListModel?.collaborators.map((collab) => collab.name) ?? [];
+  }
 }

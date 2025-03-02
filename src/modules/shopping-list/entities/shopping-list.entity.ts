@@ -17,6 +17,9 @@ export class ShoppingList {
   name: string;
   ownerId: string;
   items?: ShoppingListItem[];
+  collaborators?: {
+    name: string;
+  }[];
   createdAt: Date;
   updatedAt: Date;
 }

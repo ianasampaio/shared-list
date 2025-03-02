@@ -13,13 +13,13 @@ import {
   ActiveUser,
   UserType,
 } from 'src/shared/decorators/active-user.decorator';
-import { CreateShoppingListDto } from './dto/create-shopping-list.dto';
-import { ShoppingListService } from './shopping-list.service';
 import { AuthValidationInterceptor } from 'src/shared/interceptors/auth.interceptor';
-import { GetShoppinListByIdResponseDto } from './dto/get-shopping-list-by-id.dto';
-import { UpdateShoppingListDto } from './dto/update-shopping-list.dto';
 import { CreateItemDto } from './dto/create-item.dto';
+import { CreateShoppingListDto } from './dto/create-shopping-list.dto';
+import { GetShoppinListByIdResponseDto } from './dto/get-shopping-list-by-id.dto';
 import { UpdateItemDto } from './dto/update-item.dto';
+import { UpdateShoppingListDto } from './dto/update-shopping-list.dto';
+import { ShoppingListService } from './shopping-list.service';
 
 @Controller('shopping-list')
 @UseInterceptors(AuthValidationInterceptor)
@@ -111,6 +111,18 @@ export class ShoppingListController {
       userType,
       shoppingListId,
       itemId,
+    );
+  }
+
+  @Get(':id/collaborators')
+  @ApiOperation({ summary: 'Get collaborators from a shopping list' })
+  listCollaboratorsFromShoppingList(
+    @ActiveUser() userType: UserType,
+    @Param('id') id: string,
+  ) {
+    return this.shoppingListService.listCollaboratorsFromShoppingList(
+      userType,
+      id,
     );
   }
 }

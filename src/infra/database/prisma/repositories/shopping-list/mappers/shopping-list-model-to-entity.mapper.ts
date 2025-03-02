@@ -1,8 +1,5 @@
 import { ItemStatus as PrismaItemStatus } from '@prisma/client';
-import {
-  ItemStatus,
-  ShoppingList,
-} from 'src/modules/shopping-list/entities/shopping-list.entity';
+import { ShoppingList } from 'src/modules/shopping-list/entities/shopping-list.entity';
 import { ItemModelToEntityMapper } from './item-model-to-entity.mapper';
 
 export class ShoppingListModelToEntityMapper {
