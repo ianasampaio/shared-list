@@ -14,7 +14,7 @@ export class WebSocketAuthMiddleware {
     );
 
     if (!token) {
-      return next(new UnauthorizedException('Token ausente'));
+      return next(new UnauthorizedException('Token is required'));
     }
 
     try {
@@ -24,7 +24,7 @@ export class WebSocketAuthMiddleware {
       socket.data.user = payload.user;
       next();
     } catch (error) {
-      return next(new UnauthorizedException('Token inválido'));
+      return next(new UnauthorizedException('Ivalid Token'));
     }
   }
 }
