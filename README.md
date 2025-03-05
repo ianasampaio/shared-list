@@ -4,6 +4,16 @@
 
 O **Shared List** é uma API para gerenciamento de listas de compras compartilhadas em tempo real. Permite que múltiplos usuários colaborem em uma mesma lista, adicionando, editando e removendo itens de forma dinâmica.
 
+## ✨ Funcionalidades
+
+🔹 Autenticação segura para os usuários
+
+🔹 Criar e gerenciar listas de compras
+
+🔹 Convidar colaboradores para uma lista
+
+🔹 Adicionar, editar e remover itens em tempo real
+
 ## 🚀 Tecnologias Utilizadas
 
 - **NestJS** - Framework para construção de APIs
@@ -12,6 +22,17 @@ O **Shared List** é uma API para gerenciamento de listas de compras compartilha
 - **Prisma** - ORM para gerenciamento do banco
 - **Docker** - Containerização para facilitar a execução
 - **WebSocket** - Comunicação em tempo real
+
+## 🔌 WebSockets
+
+O projeto utiliza WebSockets para permitir atualizações em tempo real na lista de compras compartilhada. A comunicação é baseada no protocolo Socket.IO, garantindo que os usuários recebam notificações instantâneas sobre mudanças na lista. Abaixo estão os eventos implementados e suas funcionalidades:
+
+| Evento             | Descrição                                                        | Envio                                                                                                                 | Resposta                                       |
+| ------------------ | ---------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------- |
+| `joinShoppingList` | Adiciona o usuário a uma lista de compras e sincroniza os dados. | `{ "shoppingListId": "12345" }`                                                                                       | `syncList` com a lista atualizada.             |
+| `addItem`          | Adiciona um item à lista de compras.                             | `{ "shoppingListId": "12345", "createItemDto": { "description": "item" }`                                             | `itemAdded` com a lista de itens atualizada.   |
+| `updateItem`       | Atualiza um item na lista de compras.                            | `{ "shoppingListId": "12345", "itemId": "67890", "updateItemDto": { "description": "item", "status": "PURCHASED" } }` | `itemUpdated` com o item atualizado.           |
+| `deleteItem`       | Remove um item da lista de compras.                              | `{ "shoppingListId": "12345", "itemId": "67890" }`                                                                    | `itemDeleted` com a lista de itens atualizada. |
 
 ## 🛠 Instalação e Configuração
 
