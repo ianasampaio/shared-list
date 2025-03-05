@@ -11,7 +11,7 @@ O **Shared List** é uma API para gerenciamento de listas de compras compartilha
 - **PostgreSQL** - Banco de dados relacional
 - **Prisma** - ORM para gerenciamento do banco
 - **Docker** - Containerização para facilitar a execução
-- **WebSocket** - Comunicação em tempo real (implementação futura)
+- **WebSocket** - Comunicação em tempo real
 
 ## 🛠 Instalação e Configuração
 
@@ -21,7 +21,6 @@ Certifique-se de ter instalado:
 
 - [Node.js](https://nodejs.org/)
 - [Docker](https://www.docker.com/)
-- [PostgreSQL](https://www.postgresql.org/)
 
 ### Passos para rodar o projeto
 
@@ -44,17 +43,11 @@ Certifique-se de ter instalado:
    ```
 5. Execute as migrações do banco:
    ```sh
-   npx prisma migrate dev
+   npx prisma migrate dev --name init
    ```
 6. Inicie o servidor:
    ```sh
-   npm run start:dev
+   npm run start
    ```
-
-## 📌 Funcionalidades Futuras
-
-- Implementação de WebSockets para notificações em tempo real.
-
----
 
 💡 **Dúvidas ou sugestões?** Sinta-se à vontade para abrir uma _issue_ ou contribuir com _pull requests_! 😊
