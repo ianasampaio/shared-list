@@ -22,7 +22,7 @@ export class ShoppingListRepository {
     });
   }
 
-  public async listShoppingList(userType: UserType): Promise<ShoppingList[]> {
+  public async listShoppingLists(userType: UserType): Promise<ShoppingList[]> {
     const shoppingListModels = await this.prismaService.shoppingList.findMany({
       where: {
         OR: [
@@ -114,7 +114,7 @@ export class ShoppingListRepository {
     const itemModel = await this.prismaService.item.findUnique({
       where: {
         id,
-        shoppingListId: shoppingListId,
+        shoppingListId,
       },
     });
 
@@ -123,6 +123,20 @@ export class ShoppingListRepository {
     }
 
     return ItemModelToEntityMapper.map(itemModel);
+  }
+
+  public async listItems(shoppingListId: string): Promise<ShoppingListItem[]> {
+    const itemsModel = await this.prismaService.item.findMany({
+      where: {
+        shoppingListId,
+      },
+    });
+
+    const entities = itemsModel.map((itemModel) =>
+      ItemModelToEntityMapper.map(itemModel),
+    );
+
+    return entities;
   }
 
   public async addItem(
@@ -170,13 +184,10 @@ export class ShoppingListRepository {
     });
   }
 
-  public async deleteItem(
-    shoppingListId: string,
-    itemId: string,
-  ): Promise<void> {
+  public async deleteItem(id: string, shoppingListId: string): Promise<void> {
     await this.prismaService.item.delete({
       where: {
-        id: itemId,
+        id,
         shoppingListId,
       },
     });

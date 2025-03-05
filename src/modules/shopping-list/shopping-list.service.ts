@@ -33,8 +33,8 @@ export class ShoppingListService {
     });
   }
 
-  public async listShoppingList(userType: UserType) {
-    return this.shoppingListRepository.listShoppingList(userType);
+  public async listShoppingLists(userType: UserType) {
+    return this.shoppingListRepository.listShoppingLists(userType);
   }
 
   public async getShoppingListById(userType: UserType, id: string) {
@@ -98,14 +98,14 @@ export class ShoppingListService {
 
   public async addItem(
     userType: UserType,
-    id: string,
+    shoppingListId: string,
     createItemDto: CreateItemDto,
   ) {
     const now = new Date();
 
     const shoppingList = await this.shoppingListRepository.findShoppingListById(
       userType,
-      id,
+      shoppingListId,
     );
 
     if (!shoppingList) {
@@ -122,6 +122,11 @@ export class ShoppingListService {
     };
 
     await this.shoppingListRepository.addItem(userType, data);
+
+    const updatedItemList =
+      await this.shoppingListRepository.listItems(shoppingListId);
+
+    return updatedItemList;
   }
 
   public async updateItem(
@@ -158,6 +163,13 @@ export class ShoppingListService {
     };
 
     await this.shoppingListRepository.updateItem(data);
+
+    const updatedItem = await this.shoppingListRepository.findItemById(
+      itemId,
+      shoppingList.id,
+    );
+
+    return updatedItem;
   }
 
   public async deleteItem(
@@ -183,7 +195,12 @@ export class ShoppingListService {
       throw new NotFoundException(`Item not found`);
     }
 
-    await this.shoppingListRepository.deleteItem(shoppingListId, itemId);
+    await this.shoppingListRepository.deleteItem(itemId, shoppingListId);
+
+    const updatedItemList =
+      await this.shoppingListRepository.listItems(shoppingListId);
+
+    return updatedItemList;
   }
 
   public async listCollaboratorsFromShoppingList(

@@ -38,7 +38,7 @@ export class ShoppingListController {
   @Get()
   @ApiOperation({ summary: 'List shopping lists' })
   list(@ActiveUser() userType: UserType) {
-    return this.shoppingListService.listShoppingList(userType);
+    return this.shoppingListService.listShoppingLists(userType);
   }
 
   @Get(':id')
