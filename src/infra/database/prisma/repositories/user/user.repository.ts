@@ -8,12 +8,14 @@ import { UserModelToEntityMapper } from './mappers/user-model-to-entity.mapper';
 export class UserRepository {
   constructor(private readonly prismaService: PrismaService) {}
 
-  public async create(user: User): Promise<void> {
+  public async create(user: User): Promise<User> {
     const data = UserEntityToModelMapper.map(user);
 
-    await this.prismaService.user.create({
+    const userModel = await this.prismaService.user.create({
       data,
     });
+
+    return UserModelToEntityMapper.map(userModel);
   }
 
   public async findById(id: string): Promise<User | null> {

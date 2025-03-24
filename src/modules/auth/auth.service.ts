@@ -38,7 +38,7 @@ export class AuthService {
 
     const now = new Date();
 
-    await this.userRepository.create({
+    const user = await this.userRepository.create({
       id: UUIDGenerator.generate(),
       name: signupDto.name,
       email: signupDto.email,
@@ -46,6 +46,18 @@ export class AuthService {
       createdAt: now,
       updatedAt: now,
     });
+
+    const payload = {
+      user: {
+        id: user.id,
+      },
+    };
+
+    const token = await this.jwtService.signAsync(payload);
+
+    return {
+      token,
+    };
   }
 
   public async signin(signinDto: SigninDto) {
@@ -100,7 +112,7 @@ export class AuthService {
 
     await this.mailService.send({
       to: user.email,
-      subject: 'test email',
+      subject: 'Solicitação de redefinição de senha no Shared List',
       template: Templates.FORGOT_PASSWORD,
       payload: {
         link: frontendForgotPasswordUrl,

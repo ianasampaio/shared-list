@@ -63,15 +63,27 @@ describe('AuthService', () => {
 
   describe('signup', () => {
     it('should signup an user', async () => {
-      const signupInput: SignupDto = {
-        name: 'John',
-        email: 'john@doe.com',
-        password: '12345678',
+      const signupDto: SignupDto = {
+        name: 'Test User',
+        email: 'test@example.com',
+        password: 'password123',
       };
 
-      await service.signup(signupInput);
+      const user: User = {
+        id: 'b6281bf4-bb46-490f-b59d-6db9e89f8ca8',
+        ...signupDto,
+        password:
+          '$2b$10$C3B2DiJugzy1JlkRW2a.YuehWjYMpB307Qg860GgNG0N4Fhfsfhei',
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      };
+
+      jest.spyOn(userRepository, 'create').mockResolvedValueOnce(user);
+
+      const token = await service.signup(signupDto);
 
       expect(userRepository.create).toHaveBeenCalledTimes(1);
+      expect(token).toBeDefined();
     });
 
     it('should throw a conflict exception with email', async () => {
