@@ -9,6 +9,8 @@ async function bootstrap() {
 
   app.useGlobalPipes(new ValidationPipe({ whitelist: false, transform: true }));
 
+  app.enableCors();
+
   const config = new DocumentBuilder()
     .setTitle('ShareList API')
     .setDescription('ShareList API')
