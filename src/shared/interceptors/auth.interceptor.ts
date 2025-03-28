@@ -32,7 +32,6 @@ export class AuthValidationInterceptor implements NestInterceptor {
       });
 
       const user = payload.user;
-      console.log(user);
 
       request['user'] = user;
     } catch (error) {

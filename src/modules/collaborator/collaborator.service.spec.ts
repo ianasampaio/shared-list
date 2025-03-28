@@ -81,9 +81,10 @@ describe('CollaboratorService', () => {
 
       const shoppingList: ShoppingList = {
         id: '71149572-c7dd-49c9-9fc7-449c51dd6d4a',
-        userId: 'afba4ee7-f233-4d6e-be33-f9a7574aeee3',
+        ownerId: 'afba4ee7-f233-4d6e-be33-f9a7574aeee3',
         name: 'new shopping list',
         createdAt: new Date(),
+        updatedAt: new Date(),
       };
 
       jest.spyOn(userRepository, 'findByEmail').mockResolvedValueOnce(user);
@@ -137,9 +138,10 @@ describe('CollaboratorService', () => {
 
       const shoppingList: ShoppingList = {
         id: '71149572-c7dd-49c9-9fc7-449c51dd6d4a',
-        userId: 'afba4ee7-f233-4d6e-be33-f9a7574aeee3',
+        ownerId: 'afba4ee7-f233-4d6e-be33-f9a7574aeee3',
         name: 'new shopping list',
         createdAt: new Date(),
+        updatedAt: new Date(),
       };
 
       const userType: UserType = {

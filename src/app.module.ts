@@ -6,9 +6,10 @@ import { DatabaseModule } from './infra/database/database.module';
 import { ShoppingListModule } from './modules/shopping-list/shopping-list.module';
 import { CollaboratorModule } from './modules/collaborator/collaborator.module';
 import { ShoppingListEventsModule } from './modules/shopping-list-events/shopping-list-events.module';
+import { UserModule } from './modules/user/user.module';
 
 @Module({
-  imports: [DatabaseModule, AuthModule, ShoppingListModule, CollaboratorModule, ShoppingListEventsModule],
+  imports: [DatabaseModule, AuthModule, ShoppingListModule, CollaboratorModule, ShoppingListEventsModule, UserModule],
   controllers: [AppController],
   providers: [AppService],
 })
