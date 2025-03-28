@@ -78,14 +78,14 @@ describe('ShoppingListService', () => {
       };
 
       jest
-        .spyOn(shoppingListRepository, 'listShoppingList')
+        .spyOn(shoppingListRepository, 'listShoppingLists')
         .mockResolvedValueOnce([shoppingList]);
 
       const user: UserType = {
         id: '8cb4c3b7-0933-4c70-b307-0ced2dc3f4f9',
       };
 
-      const response = await service.listShoppingList(user);
+      const response = await service.listShoppingLists(user);
 
       expect(response).toBeDefined();
       expect(response).toEqual([shoppingList]);
